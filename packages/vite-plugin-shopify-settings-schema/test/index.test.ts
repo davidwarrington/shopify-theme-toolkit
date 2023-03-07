@@ -54,4 +54,13 @@ describe('vite-plugin-shopify-settings-schema', () => {
 
     expect(result).toMatchSnapshot();
   });
+
+  it('can output a config from other filetypes', async () => {
+    const fixture = getFixture('with-other-filetypes');
+    await fixture.build();
+
+    const result = await fixture.getResult();
+
+    expect(result).toMatchSnapshot();
+  });
 });

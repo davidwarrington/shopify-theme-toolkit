@@ -1,5 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`vite-plugin-shopify-settings-schema > can output a config from other filetypes 1`] = `
+{
+  "name": "vite-plugin-shopify-settings-schema",
+  "tests": [
+    "with-other-filetypes",
+  ],
+}
+`;
+
 exports[`vite-plugin-shopify-settings-schema > can output a config with a single module 1`] = `
 {
   "name": "vite-plugin-shopify-settings-schema",
