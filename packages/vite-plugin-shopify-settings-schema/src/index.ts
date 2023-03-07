@@ -1,5 +1,5 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { evalModule, normalizeid } from 'mlly';
 import type { OutputAsset, OutputChunk } from 'rollup';
 import type { Plugin } from 'vite';
@@ -55,7 +55,7 @@ export default function viteShopifySettingsSchema(options: Options): Plugin {
         this.error('Settings schema input must have a default export');
       }
 
-      await fs.writeFile(
+      await outputFile(
         options.output,
         JSON.stringify(evaluatedModule.default, null, 2),
         { encoding: 'utf-8' }
@@ -70,4 +70,13 @@ function isOutputChunk(
   assetOrChunk: OutputAsset | OutputChunk
 ): assetOrChunk is OutputChunk {
   return assetOrChunk.type === 'chunk';
+}
+
+async function outputFile(...args: Parameters<typeof writeFile>) {
+  const [outputPath] = args;
+  const outputDir = dirname(String(outputPath));
+
+  await mkdir(outputDir, { recursive: true });
+
+  return writeFile(...args);
 }

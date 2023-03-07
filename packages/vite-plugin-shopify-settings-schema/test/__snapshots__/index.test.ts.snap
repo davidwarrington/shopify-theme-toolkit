@@ -26,3 +26,12 @@ exports[`vite-plugin-shopify-settings-schema > can output a config with modules 
   ],
 }
 `;
+
+exports[`vite-plugin-shopify-settings-schema > can output a config with src and dist dirs 1`] = `
+{
+  "name": "vite-plugin-shopify-settings-schema",
+  "tests": [
+    "with-src-dist-dirs",
+  ],
+}
+`;
