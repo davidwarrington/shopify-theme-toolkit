@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { basename, isAbsolute, resolve as resolvePath } from 'node:path';
 import fastGlob from 'fast-glob';
-import { evalModule, normalizeid } from 'mlly';
-import { type Plugin, type ResolvedConfig, transformWithEsbuild } from 'vite';
+import { evalModule } from 'mlly';
+import { type Plugin, type ResolvedConfig } from 'vite';
 import { writeFile } from './utils/write-file';
 import { findSchemaImport } from './parser';
 import { transformSection } from './transformer';
@@ -33,6 +33,10 @@ export default function viteShopifySectionSchema({
     jsonStringifyOptions: [null, 2],
   },
 }: Options): Plugin {
+  const entrypoint = '\0vite-plugin-shopify-section-schema-virtual-entrypoint';
+
+  const schemaToSectionMap = new Map<string, Set<string>>();
+
   let config: ResolvedConfig;
 
   function getInputIds() {
@@ -44,64 +48,142 @@ export default function viteShopifySectionSchema({
   return {
     name: 'vite-plugin-shopify-section-schema',
 
+    config() {
+      return {
+        build: {
+          rollupOptions: {
+            input: [entrypoint],
+          },
+        },
+      };
+    },
+
     configResolved(resolvedConfig) {
       config = resolvedConfig;
     },
 
-    async generateBundle() {
-      const ids = await getInputIds();
+    resolveId(source) {
+      if (source !== entrypoint) {
+        return null;
+      }
 
-      const writeFiles = ids.map(async id => {
-        const code = await readFile(id, { encoding: 'utf-8' });
-        const schemaImport = findSchemaImport(code);
+      return source;
+    },
 
-        if (!schemaImport.specifier) {
-          return;
-        }
+    async load(id) {
+      if (id !== entrypoint) {
+        return null;
+      }
 
-        const resolvedSchemaImport = await this.resolve(
-          schemaImport.specifier,
-          id
+      const sectionIds = await getInputIds();
+      const schemaIds = await Promise.all(
+        sectionIds.map(async sectionId => {
+          const code = await readFile(sectionId, { encoding: 'utf-8' });
+          const schemaImport = findSchemaImport(code);
+
+          if (!schemaImport.specifier) {
+            return null;
+          }
+
+          const resolvedSchemaImport = await this.resolve(
+            schemaImport.specifier,
+            sectionId
+          );
+
+          if (!resolvedSchemaImport) {
+            // throw
+            return null;
+          }
+
+          const existingSectionSet = schemaToSectionMap.get(
+            resolvedSchemaImport.id
+          );
+          if (existingSectionSet) {
+            existingSectionSet.add(sectionId);
+          } else {
+            schemaToSectionMap.set(
+              resolvedSchemaImport.id,
+              new Set([sectionId])
+            );
+          }
+
+          return resolvedSchemaImport.id;
+        })
+      );
+
+      const imports = schemaIds
+        .map(id => `import(${JSON.stringify(id)});`)
+        .join('\n');
+
+      return imports;
+    },
+
+    generateBundle(_, bundle) {
+      function getOutputChunkByEntryId(id: string) {
+        return Object.entries(bundle).find(
+          ([_, value]) =>
+            'facadeModuleId' in value && value.facadeModuleId === id
         );
+      }
 
-        if (!resolvedSchemaImport) {
-          return;
+      const virtualModuleEntry = getOutputChunkByEntryId(entrypoint);
+
+      if (!virtualModuleEntry) {
+        // throw
+        return;
+      }
+
+      Array.from(schemaToSectionMap.entries()).map(
+        async ([schemaId, sectionIds]) => {
+          const outputEntry = getOutputChunkByEntryId(schemaId);
+
+          if (!outputEntry) {
+            //  throw
+            return;
+          }
+
+          const [_, chunk] = outputEntry;
+
+          if (!('code' in chunk)) {
+            //  throw
+            return;
+          }
+
+          const evaluatedSchema: EvaluatedModule = await evalModule(chunk.code);
+
+          if (!('default' in evaluatedSchema)) {
+            // throw
+            return;
+          }
+
+          return Promise.all(
+            Array.from(sectionIds).map(async sectionId => {
+              const code = await readFile(sectionId, { encoding: 'utf-8' });
+              const liquid = transformSection(
+                code,
+                JSON.stringify(
+                  evaluatedSchema.default,
+                  ...options.jsonStringifyOptions
+                )
+              );
+
+              const outputPath = resolvePath(output, basename(sectionId));
+              return writeFile(outputPath, liquid, { encoding: 'utf-8' });
+            })
+          );
         }
+      );
 
-        const baseSchemaModule = await this.load({
-          id: resolvedSchemaImport.id,
-        });
+      const entriesToDelete = Array.from(schemaToSectionMap.keys())
+        .map(getOutputChunkByEntryId)
+        .filter((u): u is Exclude<typeof u, undefined> => Boolean(u))
+        .map(entry => entry[0]);
 
-        if (!baseSchemaModule.code) {
-          return;
-        }
-
-        const transformedSchema = await transformWithEsbuild(
-          baseSchemaModule.code,
-          resolvedSchemaImport.id
-        );
-        const evaluatedModule: EvaluatedModule = await evalModule(
-          transformedSchema.code,
-          { url: normalizeid(resolvedSchemaImport.id) }
-        );
-
-        if (!('default' in evaluatedModule)) {
-          return;
-        }
-
-        const liquid = transformSection(
-          code,
-          JSON.stringify(
-            evaluatedModule.default,
-            ...options.jsonStringifyOptions
-          )
-        );
-
-        const outputPath = resolvePath(output, basename(id));
-        return writeFile(outputPath, liquid, { encoding: 'utf-8' });
+      entriesToDelete.forEach(name => {
+        delete bundle[name];
       });
 
-      await Promise.all(writeFiles);
+      delete bundle[virtualModuleEntry[0]];
     },
   };
 }

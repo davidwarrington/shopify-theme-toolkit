@@ -51,8 +51,17 @@ function getFixture(fixture: string) {
 }
 
 describe('vite-plugin-shopify-section-schema', () => {
-  it('injects schema into liquid file', async () => {
-    const fixture = getFixture('basic');
+  it('can output a schema with a single module', async () => {
+    const fixture = getFixture('with-single-module');
+    await fixture.build();
+
+    const output = await fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can output a schema with modules', async () => {
+    const fixture = getFixture('with-modules');
     await fixture.build();
 
     const output = await fixture.getResult();
