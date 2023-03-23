@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import yaml from '@rollup/plugin-yaml';
 import { build } from 'vite';
 import { describe, expect, it } from 'vitest';
 
@@ -37,7 +38,7 @@ function getFixture(fixture: string) {
             input: [getPath('src/scripts/index.ts')],
           },
         },
-        plugins: [shopifySectionSchema(options)],
+        plugins: [shopifySectionSchema(options), yaml()],
       });
     },
 
@@ -62,6 +63,15 @@ describe('vite-plugin-shopify-section-schema', () => {
 
   it('can output a schema with modules', async () => {
     const fixture = getFixture('with-modules');
+    await fixture.build();
+
+    const output = await fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can output a schema with plugin transformations', async () => {
+    const fixture = getFixture('with-plugin-transformations');
     await fixture.build();
 
     const output = await fixture.getResult();

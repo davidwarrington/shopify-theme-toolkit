@@ -1,0 +1,3 @@
+name: 'section'
+tests:
+  - 'with-plugin-transformations'

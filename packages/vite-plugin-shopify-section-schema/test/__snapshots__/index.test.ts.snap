@@ -27,3 +27,17 @@ exports[`vite-plugin-shopify-section-schema > can output a schema with modules 1
 {% endschema %}
 "
 `;
+
+exports[`vite-plugin-shopify-section-schema > can output a schema with plugin transformations 1`] = `
+"<h1>section.liquid</h1>
+
+{% schema %}
+{
+  \\"name\\": \\"section\\",
+  \\"tests\\": [
+    \\"with-plugin-transformations\\"
+  ]
+}
+{% endschema %}
+"
+`;
