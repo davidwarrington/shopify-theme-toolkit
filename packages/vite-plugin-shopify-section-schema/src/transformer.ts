@@ -1,4 +1,5 @@
 import { findSchemaImport } from './parser';
+import { SCHEMA_REGEX } from './schema-patterns';
 
 const NEWLINE = '\n';
 
@@ -21,5 +22,15 @@ export function transformSection(code: string, schema: string = '') {
     '{% endschema %}',
   ]);
 
-  return code.replace(schemaImport.code, replacementSchema);
+  if (schemaImport.type === 'replaceable') {
+    return code.replace(schemaImport.code, replacementSchema);
+  }
+
+  const hasExistingSchema = SCHEMA_REGEX.test(code);
+
+  if (hasExistingSchema) {
+    return code.replace(SCHEMA_REGEX, replacementSchema);
+  }
+
+  return join(NEWLINE)([code, replacementSchema]);
 }

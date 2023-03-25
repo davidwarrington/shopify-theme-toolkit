@@ -1,40 +1,71 @@
-const REPLACEABLE_SCHEMA_REGEX =
-  /{%-?\s*schema\s*('.*'|".*")\s*-?%}(([\s\S]*){%-?\s*endschema\s*-?%})?/;
+import {
+  INLINE_SCHEMA_COMMENT_REGEX,
+  REPLACEABLE_SCHEMA_REGEX,
+} from './schema-patterns';
 
-type FindReplaceableSchemaNoResult = {
+function findInlineSchemaImport(code: string) {
+  return code.match(INLINE_SCHEMA_COMMENT_REGEX);
+}
+
+function findReplaceableSchemaImport(code: string) {
+  return code.match(REPLACEABLE_SCHEMA_REGEX);
+}
+
+type FindSchemaImportNoResult = {
   code: null;
   matches: null;
   specifier: null;
+  type: null;
 };
-type FindReplaceableSchemaMatchedResult = {
+type FindSchemaImportMatchedResult = {
   code: string;
   matches: RegExpMatchArray;
   specifier: string;
+  type: 'inline' | 'replaceable';
 };
-type FindReplaceableSchemaResult =
-  | FindReplaceableSchemaNoResult
-  | FindReplaceableSchemaMatchedResult;
+type FindSchemaImportResult =
+  | FindSchemaImportNoResult
+  | FindSchemaImportMatchedResult;
 
-export function findSchemaImport(code: string): FindReplaceableSchemaResult {
-  const matches = code.match(REPLACEABLE_SCHEMA_REGEX);
+export function findSchemaImport(code: string): FindSchemaImportResult {
+  const typedMatch = [
+    ['replaceable', findReplaceableSchemaImport(code)] as const,
+    ['inline', findInlineSchemaImport(code)] as const,
+  ].find((entries): entries is ['inline' | 'replaceable', RegExpMatchArray] => {
+    const [_, matches] = entries;
+    return matches !== null;
+  });
 
-  if (!matches) {
+  if (!typedMatch) {
     return {
       code: null,
       matches: null,
       specifier: null,
+      type: null,
     };
   }
 
-  const source = matches[0];
+  const [type, matches] = typedMatch;
+
+  if (matches === null) {
+    return {
+      code: null,
+      matches: null,
+      specifier: null,
+      type: null,
+    };
+  }
+
+  const [source, quotedSpecifier] = matches;
   const specifier = ((string: string) => {
     const quote = string[0];
     return string.replace(new RegExp(`^${quote}|${quote}$`, 'g'), '');
-  })(matches[1]);
+  })(quotedSpecifier);
 
   return {
     code: source,
     matches,
     specifier,
+    type,
   };
 }

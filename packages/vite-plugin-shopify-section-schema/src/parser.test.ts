@@ -108,4 +108,20 @@ describe('find schema import', () => {
       expect(findSchemaImport(input).specifier).toBe(expected);
     });
   });
+
+  describe('type', () => {
+    it('can detect replaceable schema imports', () => {
+      const input = `{% schema 'schema' %}{% schema %}`;
+      const expected = 'replaceable';
+
+      expect(findSchemaImport(input).type).toBe(expected);
+    });
+
+    it('can detect inline schema imports', () => {
+      const input = `{%- # import schema from 'schema' -%}`;
+      const expected = 'inline';
+
+      expect(findSchemaImport(input).type).toBe(expected);
+    });
+  });
 });
