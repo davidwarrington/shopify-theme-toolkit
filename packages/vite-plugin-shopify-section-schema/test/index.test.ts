@@ -79,4 +79,20 @@ describe('vite-plugin-shopify-section-schema', () => {
 
     expect(output).toMatchSnapshot();
   });
+
+  it('errors if imported schema does not have a default export', async () => {
+    const fixture = getFixture('with-error-schema-no-default-export');
+
+    await expect(fixture.build).rejects.toThrowError(
+      /Schema module must have a default export\. ".*"/
+    );
+  });
+
+  it('errors if imported schema cannot be found', async () => {
+    const fixture = getFixture('with-error-schema-not-found');
+
+    await expect(fixture.build).rejects.toThrowError(
+      /Could not resolve import ".*" from ".*"/
+    );
+  });
 });

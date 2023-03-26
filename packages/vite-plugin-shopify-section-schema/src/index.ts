@@ -91,8 +91,9 @@ export default function viteShopifySectionSchema({
           );
 
           if (!resolvedSchemaImport) {
-            // throw
-            return null;
+            this.error(
+              `Could not resolve import "${schemaImport.specifier}" from "${sectionId}".`
+            );
           }
 
           const existingSectionSet = schemaToSectionMap.get(
@@ -129,8 +130,7 @@ export default function viteShopifySectionSchema({
       const virtualModuleEntry = getOutputChunkByEntryId(entrypoint);
 
       if (!virtualModuleEntry) {
-        // throw
-        return;
+        this.error(`Entrypoint could not be found. "${entrypoint}"`);
       }
 
       await Promise.all(
@@ -139,15 +139,13 @@ export default function viteShopifySectionSchema({
             const outputEntry = getOutputChunkByEntryId(schemaId);
 
             if (!outputEntry) {
-              // throw
-              return;
+              this.error(`Entry not found in output bundle. "${schemaId}"`);
             }
 
             const [_, chunk] = outputEntry;
 
             if (!('code' in chunk)) {
-              // throw
-              return;
+              this.error(`Entry contains no code. "${schemaId}"`);
             }
 
             const evaluatedSchema: EvaluatedModule = await evalModule(
@@ -155,8 +153,9 @@ export default function viteShopifySectionSchema({
             );
 
             if (!('default' in evaluatedSchema)) {
-              // throw
-              return;
+              this.error(
+                `Schema module must have a default export. "${schemaId}"`
+              );
             }
 
             return Promise.all(
