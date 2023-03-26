@@ -29,9 +29,6 @@ function getFixture(fixture: string) {
         logLevel: 'silent',
         build: {
           outDir: getPath('dist'),
-          rollupOptions: {
-            input: [getPath('src/scripts/index.ts')],
-          },
         },
         plugins: [shopifySectionSchema(options), yaml()],
       });

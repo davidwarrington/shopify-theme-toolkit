@@ -118,7 +118,7 @@ export default function viteShopifySectionSchema({
       return imports;
     },
 
-    generateBundle(_, bundle) {
+    async generateBundle(_, bundle) {
       function getOutputChunkByEntryId(id: string) {
         return Object.entries(bundle).find(
           ([_, value]) =>
@@ -133,45 +133,49 @@ export default function viteShopifySectionSchema({
         return;
       }
 
-      Array.from(schemaToSectionMap.entries()).map(
-        async ([schemaId, sectionIds]) => {
-          const outputEntry = getOutputChunkByEntryId(schemaId);
+      await Promise.all(
+        Array.from(schemaToSectionMap.entries()).map(
+          async ([schemaId, sectionIds]) => {
+            const outputEntry = getOutputChunkByEntryId(schemaId);
 
-          if (!outputEntry) {
-            // throw
-            return;
+            if (!outputEntry) {
+              // throw
+              return;
+            }
+
+            const [_, chunk] = outputEntry;
+
+            if (!('code' in chunk)) {
+              // throw
+              return;
+            }
+
+            const evaluatedSchema: EvaluatedModule = await evalModule(
+              chunk.code
+            );
+
+            if (!('default' in evaluatedSchema)) {
+              // throw
+              return;
+            }
+
+            return Promise.all(
+              Array.from(sectionIds).map(async sectionId => {
+                const code = await readFile(sectionId, { encoding: 'utf-8' });
+                const liquid = transformSection(
+                  code,
+                  JSON.stringify(
+                    evaluatedSchema.default,
+                    ...options.jsonStringifyOptions
+                  )
+                );
+
+                const outputPath = resolvePath(output, basename(sectionId));
+                return writeFile(outputPath, liquid, { encoding: 'utf-8' });
+              })
+            );
           }
-
-          const [_, chunk] = outputEntry;
-
-          if (!('code' in chunk)) {
-            // throw
-            return;
-          }
-
-          const evaluatedSchema: EvaluatedModule = await evalModule(chunk.code);
-
-          if (!('default' in evaluatedSchema)) {
-            // throw
-            return;
-          }
-
-          return Promise.all(
-            Array.from(sectionIds).map(async sectionId => {
-              const code = await readFile(sectionId, { encoding: 'utf-8' });
-              const liquid = transformSection(
-                code,
-                JSON.stringify(
-                  evaluatedSchema.default,
-                  ...options.jsonStringifyOptions
-                )
-              );
-
-              const outputPath = resolvePath(output, basename(sectionId));
-              return writeFile(outputPath, liquid, { encoding: 'utf-8' });
-            })
-          );
-        }
+        )
       );
 
       const entriesToDelete = Array.from(schemaToSectionMap.keys())
