@@ -17,18 +17,13 @@ function getFixture(fixture: string) {
   }
 
   const base = getPath();
-  let options = {
+  const options = {
     input: 'src/sections/*.liquid',
     output: getPath('dist/sections'),
   };
 
   return {
-    build(pluginOptions = {}) {
-      options = {
-        ...options,
-        ...pluginOptions,
-      };
-
+    build() {
       return build({
         root: getPath(),
         logLevel: 'silent',
@@ -72,6 +67,15 @@ describe('vite-plugin-shopify-section-schema', () => {
 
   it('can output a schema with plugin transformations', async () => {
     const fixture = getFixture('with-plugin-transformations');
+    await fixture.build();
+
+    const output = await fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can output a section with inline schema', async () => {
+    const fixture = getFixture('with-inline-schema');
     await fixture.build();
 
     const output = await fixture.getResult();

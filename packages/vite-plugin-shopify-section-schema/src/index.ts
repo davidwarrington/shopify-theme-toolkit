@@ -138,14 +138,14 @@ export default function viteShopifySectionSchema({
           const outputEntry = getOutputChunkByEntryId(schemaId);
 
           if (!outputEntry) {
-            //  throw
+            // throw
             return;
           }
 
           const [_, chunk] = outputEntry;
 
           if (!('code' in chunk)) {
-            //  throw
+            // throw
             return;
           }
 
@@ -176,7 +176,9 @@ export default function viteShopifySectionSchema({
 
       const entriesToDelete = Array.from(schemaToSectionMap.keys())
         .map(getOutputChunkByEntryId)
-        .filter((u): u is Exclude<typeof u, undefined> => Boolean(u))
+        .filter((entry): entry is Exclude<typeof entry, undefined> =>
+          Boolean(entry)
+        )
         .map(entry => entry[0]);
 
       entriesToDelete.forEach(name => {

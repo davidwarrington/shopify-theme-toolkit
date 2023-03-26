@@ -41,3 +41,18 @@ exports[`vite-plugin-shopify-section-schema > can output a schema with plugin tr
 {% endschema %}
 "
 `;
+
+exports[`vite-plugin-shopify-section-schema > can output a section with inline schema 1`] = `
+"{%- # import schema from '../schemas/section.ts' -%}
+
+<h1>section.liquid</h1>
+
+{% schema %}
+{
+  \\"name\\": \\"vite-plugin-shopify-section-schema\\",
+  \\"tests\\": [
+    \\"with-inline-schema\\"
+  ]
+}
+{% endschema %}"
+`;
