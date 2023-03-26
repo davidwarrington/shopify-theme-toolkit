@@ -74,8 +74,8 @@ describe('vite-plugin-shopify-section-schema', () => {
     expect(output).toMatchSnapshot();
   });
 
-  it('can output a section with inline schema', async () => {
-    const fixture = getFixture('with-inline-schema');
+  it('can output a section with import schema comment', async () => {
+    const fixture = getFixture('with-import-schema-comment');
     await fixture.build();
 
     const output = await fixture.getResult();

@@ -39,14 +39,14 @@ describe('transform section', () => {
 
 {% schema './schema' %}
       `.trim(),
-      JSON.stringify({ name: 'dynamic replaceable schema' }, null, 2),
+      JSON.stringify({ name: 'replaceable schema' }, null, 2),
     ] as const;
     const expected = `
 <h1>static</h1>
 
 {% schema %}
 {
-  "name": "dynamic replaceable schema"
+  "name": "replaceable schema"
 }
 {% endschema %}
     `.trim();
@@ -54,22 +54,22 @@ describe('transform section', () => {
     expect(transformSection(...input)).toBe(expected);
   });
 
-  it('transforms a section with an inline schema', () => {
+  it('transforms a section with an import schema comment', () => {
     const input = [
       `
-<h1>dynamic inline</h1>
+<h1>import schema comment</h1>
 
 {% # import schema from 'schema' %}
       `.trim(),
-      JSON.stringify({ name: 'dynamic inline schema' }, null, 2),
+      JSON.stringify({ name: 'import schema comment' }, null, 2),
     ] as const;
     const expected = `
-<h1>dynamic inline</h1>
+<h1>import schema comment</h1>
 
 {% # import schema from 'schema' %}
 {% schema %}
 {
-  "name": "dynamic inline schema"
+  "name": "import schema comment"
 }
 {% endschema %}
     `.trim();
@@ -77,10 +77,10 @@ describe('transform section', () => {
     expect(transformSection(...input)).toBe(expected);
   });
 
-  it('transforms a section with an inline schema comment and existing schema', () => {
+  it('transforms a section with an import schema comment and existing schema', () => {
     const input = [
       `
-<h1>dynamic inline</h1>
+<h1>import schema comment</h1>
 
 {% # import schema from 'schema' %}
 {% schema %}
@@ -89,15 +89,15 @@ describe('transform section', () => {
 }
 {% endschema %}
       `.trim(),
-      JSON.stringify({ name: 'dynamic inline schema' }, null, 2),
+      JSON.stringify({ name: 'import schema comment' }, null, 2),
     ] as const;
     const expected = `
-<h1>dynamic inline</h1>
+<h1>import schema comment</h1>
 
 {% # import schema from 'schema' %}
 {% schema %}
 {
-  "name": "dynamic inline schema"
+  "name": "import schema comment"
 }
 {% endschema %}
     `.trim();

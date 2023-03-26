@@ -1,4 +1,4 @@
 export default {
   name: 'vite-plugin-shopify-section-schema',
-  tests: ['with-inline-schema'],
+  tests: ['with-import-schema-comment'],
 };
