@@ -1,0 +1,23 @@
+{
+  "name": "vite-plugin-shopify-inline-translations",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "main": "./dist/index.mjs",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/estree": "^1.0.0",
+    "tsconfig": "workspace:*",
+    "vite": "^4.1.4",
+    "vitest": "^0.29.2"
+  },
+  "dependencies": {
+    "acorn": "^8.8.2",
+    "estree-walker": "^3.0.3",
+    "magic-string": "^0.30.0",
+    "mlly": "^1.1.1"
+  }
+}

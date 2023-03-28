@@ -1,0 +1,7 @@
+{
+  "test": "default-import",
+
+  "foo": {
+    "bar": "baz"
+  }
+}
