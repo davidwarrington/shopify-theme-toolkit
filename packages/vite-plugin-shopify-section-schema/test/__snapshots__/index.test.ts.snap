@@ -33,7 +33,7 @@ exports[`vite-plugin-shopify-section-schema > can output a schema with plugin tr
 
 {% schema %}
 {
-  \\"name\\": \\"section\\",
+  \\"name\\": \\"vite-plugin-shopify-section-schema\\",
   \\"tests\\": [
     \\"with-plugin-transformations\\"
   ]
