@@ -57,8 +57,18 @@ function getFixture(fixture: string) {
 }
 
 describe('vite-plugin-shopify-settings-schema', () => {
-  it('can output a config with a single module', async () => {
+  it('can handle default imports', async () => {
     const fixture = getFixture('with-default-import');
+    const output = await fixture.build();
+
+    const result = await fixture.getResult(output);
+
+    expect(result.js).toMatchSnapshot('js');
+    expect(result.liquid).toMatchSnapshot('liquid');
+  });
+
+  it('can handle named imports', async () => {
+    const fixture = getFixture('with-named-imports');
     const output = await fixture.build();
 
     const result = await fixture.getResult(output);

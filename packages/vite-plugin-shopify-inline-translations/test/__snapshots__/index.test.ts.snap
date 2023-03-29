@@ -1,11 +1,27 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`vite-plugin-shopify-settings-schema > can output a config with a single module > js 1`] = `
+exports[`vite-plugin-shopify-settings-schema > can handle default imports > js 1`] = `
 "console.log(window.translations.foo.bar);console.log(window.translations.test);
 "
 `;
 
-exports[`vite-plugin-shopify-settings-schema > can output a config with a single module > liquid 1`] = `
+exports[`vite-plugin-shopify-settings-schema > can handle default imports > liquid 1`] = `
+"<script>
+window.translations = {
+  \\"foo\\": {
+    \\"bar\\": {{ 'foo.bar' | t | json }}
+  },
+  \\"test\\": {{ 'test' | t | json }}
+}
+</script>"
+`;
+
+exports[`vite-plugin-shopify-settings-schema > can handle named imports > js 1`] = `
+"console.log(window.translations.foo.bar);console.log(window.translations.test);
+"
+`;
+
+exports[`vite-plugin-shopify-settings-schema > can handle named imports > liquid 1`] = `
 "<script>
 window.translations = {
   \\"foo\\": {

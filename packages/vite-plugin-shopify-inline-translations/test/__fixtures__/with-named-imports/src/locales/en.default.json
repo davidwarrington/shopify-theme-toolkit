@@ -1,0 +1,7 @@
+{
+  "test": "named-imports",
+
+  "foo": {
+    "bar": "baz"
+  }
+}

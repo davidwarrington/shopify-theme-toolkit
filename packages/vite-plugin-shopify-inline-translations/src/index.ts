@@ -61,13 +61,18 @@ export default function viteShopifyInlineTranslations({
           return [parseStaticImport(staticImport), ...rest] as const;
         }
       );
-      const importedVariablesToReplace = new Set<string>();
+      const importedDefaultVariablesToReplace = new Set<string>();
+      const importedNamedVariablesToReplace = new Set<string>();
       parsedAndResolvedImports.forEach(([parsedImport]) => {
-        if (!parsedImport.defaultImport) {
-          return;
+        if (parsedImport.defaultImport) {
+          importedDefaultVariablesToReplace.add(parsedImport.defaultImport);
         }
 
-        importedVariablesToReplace.add(parsedImport.defaultImport);
+        if (parsedImport.namedImports) {
+          Object.keys(parsedImport.namedImports).forEach(namedImport => {
+            importedNamedVariablesToReplace.add(namedImport);
+          });
+        }
       });
 
       const magicString = new MagicString(code);
@@ -82,9 +87,13 @@ export default function viteShopifyInlineTranslations({
               ([parsedImport]) => parsedImport.specifier === node.source.value
             );
 
-            if (isTranslationsImport) {
+            if (!isTranslationsImport) {
               return;
             }
+
+            node.specifiers.forEach(specifier => {
+              visitedRootNodes.add(specifier.local);
+            });
 
             const { start, end } = node;
             magicString.remove(start, end);
@@ -98,14 +107,41 @@ export default function viteShopifyInlineTranslations({
             }
 
             const { name, start, end } = root;
-            if (!importedVariablesToReplace.has(name)) {
+            const isDefaultImport = importedDefaultVariablesToReplace.has(name);
+            const isNamedImport = importedNamedVariablesToReplace.has(name);
+            if (!isDefaultImport && !isNamedImport) {
               return;
             }
 
-            translationsToRender.push(getPathToNode(node));
+            const path = getPathToNode(node, isNamedImport);
+            translationsToRender.push(path);
             visitedRootNodes.add(root);
 
-            magicString.overwrite(start, end, namespace);
+            if (isDefaultImport) {
+              magicString.overwrite(start, end, namespace);
+            } else {
+              magicString.prependLeft(start, `${namespace}.`);
+            }
+          }
+
+          if (node.type === 'Identifier') {
+            const root = getRootNode(node);
+
+            if (visitedRootNodes.has(root)) {
+              return;
+            }
+
+            const { name, start, end } = root;
+            const isNamedImport = importedNamedVariablesToReplace.has(name);
+            if (!isNamedImport) {
+              return;
+            }
+
+            const path = getPathToNode(node, isNamedImport);
+            translationsToRender.push(path);
+            visitedRootNodes.add(root);
+
+            magicString.overwrite(start, end, [namespace, ...path].join('.'));
           }
         },
       });
@@ -160,19 +196,20 @@ function getRootNode(node: MemberExpression | Identifier): Identifier {
 
 function getPathToNode(
   node: Identifier | MemberExpression,
+  maintainRoot = false,
   path: string[] = []
 ): string[] {
   const isRoot = node.type !== 'MemberExpression';
 
   if (isRoot) {
-    /**
-     * If on the root node, don't extend the path.
-     * The root node does not have a name.
-     */
+    if (maintainRoot) {
+      return [node.name, ...path];
+    }
+
     return path;
   }
 
-  return getPathToNode(node.object as MemberExpression, [
+  return getPathToNode(node.object as MemberExpression, maintainRoot, [
     (node.property as Identifier).name,
     ...path,
   ]);
