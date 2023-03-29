@@ -14,20 +14,35 @@ export interface Options {
 }
 
 export default function viteShopifySettingsSchema(options: Options): Plugin {
+  const entrypoint = '\0virtual:shopify-settings-schema';
+
   return {
     name: 'vite-plugin-shopify-settings-schema',
 
-    config(existingConfig) {
+    config() {
       return {
         build: {
           rollupOptions: {
-            input: [options.input],
-            preserveEntrySignatures:
-              existingConfig.build?.rollupOptions?.preserveEntrySignatures ??
-              'exports-only',
+            input: [entrypoint],
           },
         },
       };
+    },
+
+    resolveId(source) {
+      if (source !== entrypoint) {
+        return null;
+      }
+
+      return source;
+    },
+
+    load(id) {
+      if (id !== entrypoint) {
+        return;
+      }
+
+      return `import(${JSON.stringify(options.input)})`;
     },
 
     async generateBundle(_, bundle) {
@@ -37,11 +52,17 @@ export default function viteShopifySettingsSchema(options: Options): Plugin {
           .find(asset => asset.facadeModuleId === id);
       }
 
+      const virtualModule = getChunkByModuleId(entrypoint);
+
+      if (!virtualModule) {
+        this.error(`Entrypoint could not be found. "${entrypoint}"`);
+      }
+
       const id = options.input;
       const settingsSchema = getChunkByModuleId(id);
 
-      if (typeof settingsSchema === 'undefined') {
-        return this.error(`No settings schema found at "${id}"`);
+      if (!settingsSchema) {
+        this.error(`No settings schema found at "${id}"`);
       }
 
       const evaluatedModule: ResolvedSettingsSchema = await evalModule(
@@ -61,6 +82,7 @@ export default function viteShopifySettingsSchema(options: Options): Plugin {
         { encoding: 'utf-8' }
       );
 
+      delete bundle[virtualModule.fileName];
       delete bundle[settingsSchema.fileName];
     },
   };
