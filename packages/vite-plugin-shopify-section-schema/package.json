@@ -1,0 +1,21 @@
+{
+  "name": "vite-plugin-shopify-section-schema",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "main": "./dist/index.mjs",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@rollup/plugin-yaml": "^4.0.1",
+    "tsconfig": "workspace:*",
+    "vite": "^4.1.4",
+    "vitest": "^0.29.2"
+  },
+  "dependencies": {
+    "fast-glob": "^3.2.12",
+    "mlly": "^1.1.1"
+  }
+}

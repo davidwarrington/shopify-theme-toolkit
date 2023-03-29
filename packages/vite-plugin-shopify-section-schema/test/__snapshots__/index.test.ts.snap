@@ -1,0 +1,58 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`vite-plugin-shopify-section-schema > can output a schema with a single module 1`] = `
+"<h1>section.liquid</h1>
+
+{% schema %}
+{
+  \\"name\\": \\"vite-plugin-shopify-section-schema\\",
+  \\"tests\\": [
+    \\"with-single-module\\"
+  ]
+}
+{% endschema %}
+"
+`;
+
+exports[`vite-plugin-shopify-section-schema > can output a schema with modules 1`] = `
+"<h1>section.liquid</h1>
+
+{% schema %}
+{
+  \\"name\\": \\"vite-plugin-shopify-section-schema\\",
+  \\"tests\\": [
+    \\"with-modules\\"
+  ]
+}
+{% endschema %}
+"
+`;
+
+exports[`vite-plugin-shopify-section-schema > can output a schema with plugin transformations 1`] = `
+"<h1>section.liquid</h1>
+
+{% schema %}
+{
+  \\"name\\": \\"vite-plugin-shopify-section-schema\\",
+  \\"tests\\": [
+    \\"with-plugin-transformations\\"
+  ]
+}
+{% endschema %}
+"
+`;
+
+exports[`vite-plugin-shopify-section-schema > can output a section with import schema comment 1`] = `
+"{%- # import schema from '../schemas/section.ts' -%}
+
+<h1>section.liquid</h1>
+
+{% schema %}
+{
+  \\"name\\": \\"vite-plugin-shopify-section-schema\\",
+  \\"tests\\": [
+    \\"with-import-schema-comment\\"
+  ]
+}
+{% endschema %}"
+`;

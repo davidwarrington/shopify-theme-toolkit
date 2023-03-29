@@ -1,0 +1,3 @@
+name: 'vite-plugin-shopify-section-schema'
+tests:
+  - 'with-plugin-transformations'
