@@ -33,7 +33,7 @@ export default function viteShopifySectionSchema({
     jsonStringifyOptions: [null, 2],
   },
 }: Options): Plugin {
-  const entrypoint = '\0vite-plugin-shopify-section-schema-virtual-entrypoint';
+  const entrypoint = '\0virtual:shopify-section-schema';
 
   const schemaToSectionMap = new Map<string, Set<string>>();
 
