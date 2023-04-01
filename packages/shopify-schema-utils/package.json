@@ -1,0 +1,16 @@
+{
+  "name": "shopify-schema-utils",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "main": "./dist/index.mjs",
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "vitest": "^0.29.2"
+  }
+}
