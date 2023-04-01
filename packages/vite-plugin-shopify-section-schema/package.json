@@ -4,13 +4,24 @@
   "description": "",
   "license": "ISC",
   "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
+    "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.0.1",
     "tsconfig": "workspace:*",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.2",
     "vite": "^4.1.4",
     "vitest": "^0.29.2"
   },
