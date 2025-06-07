@@ -69,7 +69,7 @@ export default function viteShopifySettingsSchema(options: Options): Plugin {
         settingsSchema.code,
         {
           url: normalizeid(id),
-        }
+        },
       );
 
       if (!('default' in evaluatedModule)) {
@@ -79,7 +79,7 @@ export default function viteShopifySettingsSchema(options: Options): Plugin {
       await outputFile(
         options.output,
         JSON.stringify(evaluatedModule.default, null, 2),
-        { encoding: 'utf-8' }
+        { encoding: 'utf8' },
       );
 
       delete bundle[virtualModule.fileName];
@@ -89,16 +89,16 @@ export default function viteShopifySettingsSchema(options: Options): Plugin {
 }
 
 function isOutputChunk(
-  assetOrChunk: OutputAsset | OutputChunk
+  assetOrChunk: OutputAsset | OutputChunk,
 ): assetOrChunk is OutputChunk {
   return assetOrChunk.type === 'chunk';
 }
 
 async function outputFile(...args: Parameters<typeof writeFile>) {
   const [outputPath] = args;
-  const outputDir = dirname(String(outputPath));
+  const outputDirectory = dirname(String(outputPath));
 
-  await mkdir(outputDir, { recursive: true });
+  await mkdir(outputDirectory, { recursive: true });
 
   return writeFile(...args);
 }

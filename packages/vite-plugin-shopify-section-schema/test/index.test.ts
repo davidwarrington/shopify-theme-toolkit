@@ -8,7 +8,7 @@ import shopifySectionSchema from '../src';
 
 function getFixture(fixture: string) {
   function getPath(relativePath?: string) {
-    const base = path.join(__dirname, '__fixtures__', fixture);
+    const base = path.join(import.meta.dirname, '__fixtures__', fixture);
     if (!relativePath) {
       return base;
     }
@@ -16,7 +16,6 @@ function getFixture(fixture: string) {
     return path.resolve(base, relativePath);
   }
 
-  const base = getPath();
   const options = {
     input: 'src/sections/*.liquid',
     output: getPath('dist/sections'),
@@ -38,7 +37,7 @@ function getFixture(fixture: string) {
 
     async getResult() {
       const output = path.resolve(options.output, 'section.liquid');
-      return fs.readFile(output, { encoding: 'utf-8' });
+      return fs.readFile(output, { encoding: 'utf8' });
     },
   };
 }
@@ -84,7 +83,7 @@ describe('vite-plugin-shopify-section-schema', () => {
     const fixture = getFixture('with-error-schema-no-default-export');
 
     await expect(fixture.build).rejects.toThrowError(
-      /Schema module must have a default export\. ".*"/
+      /Schema module must have a default export\. ".*"/,
     );
   });
 
@@ -92,7 +91,7 @@ describe('vite-plugin-shopify-section-schema', () => {
     const fixture = getFixture('with-error-schema-not-found');
 
     await expect(fixture.build).rejects.toThrowError(
-      /Could not resolve import ".*" from ".*"/
+      /Could not resolve import ".*" from ".*"/,
     );
   });
 });
