@@ -4,7 +4,9 @@
   "description": "",
   "license": "ISC",
   "main": "./dist/index.mjs",
+  "type": "module",
   "scripts": {
+    "build": "tsdown",
     "test": "vitest run",
     "test:watch": "vitest"
   },
