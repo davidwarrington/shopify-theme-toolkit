@@ -1,0 +1,16 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`esbuild-plugin-liquid-schemas > can output a section with import schema comment 1`] = `
+"{%- # import schema from '../schemas/section.ts' -%}
+
+<h1>section.liquid</h1>
+
+{% schema %}
+{
+  "name": "esbuild-plugin-liquid-schemas",
+  "tests": [
+    "with-import-schema-comment"
+  ]
+}
+{% endschema %}"
+`;

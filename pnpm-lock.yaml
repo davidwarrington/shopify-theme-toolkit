@@ -24,6 +24,34 @@ importers:
         specifier: ^2.5.4
         version: 2.5.4
 
+  packages/esbuild-plugin-liquid-schemas:
+    dependencies:
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
+      mlly:
+        specifier: ^1.1.1
+        version: 1.7.4
+    devDependencies:
+      '@rollup/plugin-yaml':
+        specifier: ^4.0.1
+        version: 4.1.2(rollup@4.42.0)
+      '@types/node':
+        specifier: ^22.15.30
+        version: 22.15.30
+      esbuild:
+        specifier: ^0.25.5
+        version: 0.25.5
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+      vite:
+        specifier: ^6.3.5
+        version: 6.3.5(@types/node@22.15.30)
+      vitest:
+        specifier: ^3.2.2
+        version: 3.2.2(@types/node@22.15.30)
+
   packages/tsconfig: {}
 
   packages/vite-plugin-shopify-section-schema:

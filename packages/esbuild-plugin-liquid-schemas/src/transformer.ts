@@ -23,7 +23,6 @@ export function transformSection(code: string, schema: string = '') {
   ]);
 
   if (schemaImport.type === 'replaceable') {
-    console.log(schemaImport.code);
     return code.replace(schemaImport.code, replacementSchema);
   }
 
