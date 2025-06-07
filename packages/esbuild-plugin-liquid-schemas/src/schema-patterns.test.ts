@@ -24,7 +24,7 @@ describe('schema regex', () => {
     `doesn't match %s`,
     input => {
       expect(SCHEMA_REGEX.test(input)).toBeFalsy();
-    }
+    },
   );
 });
 

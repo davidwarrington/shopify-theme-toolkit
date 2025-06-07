@@ -8,4 +8,8 @@ export default [
       'unicorn/no-null': 'off',
     },
   },
+
+  {
+    ignores: ['packages/*/dist'],
+  },
 ];
