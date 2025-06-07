@@ -5,8 +5,11 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "moduleResolution": "node",
-    "strict": true
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "target": "esnext"
   },
   "exclude": ["node_modules"]
 }

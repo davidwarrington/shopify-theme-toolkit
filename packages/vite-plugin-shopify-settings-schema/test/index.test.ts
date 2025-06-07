@@ -8,7 +8,7 @@ import shopifySettingsSchema, {
 
 function getFixture(fixture: string) {
   function getPath(relativePath?: string) {
-    const base = path.join(__dirname, '__fixtures__', fixture);
+    const base = path.join(import.meta.dirname, '__fixtures__', fixture);
     if (!relativePath) {
       return base;
     }
@@ -43,7 +43,7 @@ function getFixture(fixture: string) {
     getPath,
 
     async getResult<T>() {
-      const content = await fs.readFile(options.output, { encoding: 'utf-8' });
+      const content = await fs.readFile(options.output, { encoding: 'utf8' });
       return JSON.parse(content) as T;
     },
   };

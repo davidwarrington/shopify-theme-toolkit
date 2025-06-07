@@ -33,11 +33,11 @@ export function findSchemaImport(code: string): FindSchemaImportResult {
     ['import-comment', findSchemaImportComment(code)] as const,
   ].find(
     (
-      entries
+      entries,
     ): entries is ['import-comment' | 'replaceable', RegExpMatchArray] => {
-      const [_, matches] = entries;
+      const [, matches] = entries;
       return matches !== null;
-    }
+    },
   );
 
   if (!typedMatch) {
@@ -63,7 +63,7 @@ export function findSchemaImport(code: string): FindSchemaImportResult {
   const [source, quotedSpecifier] = matches;
   const specifier = ((string: string) => {
     const quote = string[0];
-    return string.replace(new RegExp(`^${quote}|${quote}$`, 'g'), '');
+    return string.replaceAll(new RegExp(`^${quote}|${quote}$`, 'g'), '');
   })(quotedSpecifier);
 
   return {

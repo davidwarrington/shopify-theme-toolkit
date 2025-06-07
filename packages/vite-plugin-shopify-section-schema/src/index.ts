@@ -7,11 +7,8 @@ import { writeFile } from './utils/write-file';
 import { findSchemaImport } from './parser';
 import { transformSection } from './transformer';
 
-type Tail<T extends any[]> = ((...t: T) => void) extends (
-  h: any,
-  ...r: infer R
-) => void
-  ? R
+type Tail<Tuple extends unknown[]> = Tuple extends [unknown, ...infer Rest]
+  ? Rest
   : never;
 
 export interface Options {
@@ -78,7 +75,7 @@ export default function viteShopifySectionSchema({
       const sectionIds = await getInputIds();
       const schemaIds = await Promise.all(
         sectionIds.map(async sectionId => {
-          const code = await readFile(sectionId, { encoding: 'utf-8' });
+          const code = await readFile(sectionId, { encoding: 'utf8' });
           const schemaImport = findSchemaImport(code);
 
           if (!schemaImport.specifier) {
@@ -87,29 +84,29 @@ export default function viteShopifySectionSchema({
 
           const resolvedSchemaImport = await this.resolve(
             schemaImport.specifier,
-            sectionId
+            sectionId,
           );
 
           if (!resolvedSchemaImport) {
             this.error(
-              `Could not resolve import "${schemaImport.specifier}" from "${sectionId}".`
+              `Could not resolve import "${schemaImport.specifier}" from "${sectionId}".`,
             );
           }
 
           const existingSectionSet = schemaToSectionMap.get(
-            resolvedSchemaImport.id
+            resolvedSchemaImport.id,
           );
           if (existingSectionSet) {
             existingSectionSet.add(sectionId);
           } else {
             schemaToSectionMap.set(
               resolvedSchemaImport.id,
-              new Set([sectionId])
+              new Set([sectionId]),
             );
           }
 
           return resolvedSchemaImport.id;
-        })
+        }),
       );
 
       const imports = schemaIds
@@ -122,8 +119,8 @@ export default function viteShopifySectionSchema({
     async generateBundle(_, bundle) {
       function getOutputChunkByEntryId(id: string) {
         return Object.entries(bundle).find(
-          ([_, value]) =>
-            'facadeModuleId' in value && value.facadeModuleId === id
+          ([, value]) =>
+            'facadeModuleId' in value && value.facadeModuleId === id,
         );
       }
 
@@ -134,7 +131,7 @@ export default function viteShopifySectionSchema({
       }
 
       await Promise.all(
-        Array.from(schemaToSectionMap.entries()).map(
+        [...schemaToSectionMap.entries()].map(
           async ([schemaId, sectionIds]) => {
             const outputEntry = getOutputChunkByEntryId(schemaId);
 
@@ -142,46 +139,44 @@ export default function viteShopifySectionSchema({
               this.error(`Entry not found in output bundle. "${schemaId}"`);
             }
 
-            const [_, chunk] = outputEntry;
+            const [, chunk] = outputEntry;
 
             if (!('code' in chunk)) {
               this.error(`Entry contains no code. "${schemaId}"`);
             }
 
             const evaluatedSchema: EvaluatedModule = await evalModule(
-              chunk.code
+              chunk.code,
             );
 
             if (!('default' in evaluatedSchema)) {
               this.error(
-                `Schema module must have a default export. "${schemaId}"`
+                `Schema module must have a default export. "${schemaId}"`,
               );
             }
 
             return Promise.all(
-              Array.from(sectionIds).map(async sectionId => {
-                const code = await readFile(sectionId, { encoding: 'utf-8' });
+              [...sectionIds].map(async sectionId => {
+                const code = await readFile(sectionId, { encoding: 'utf8' });
                 const liquid = transformSection(
                   code,
                   JSON.stringify(
                     evaluatedSchema.default,
-                    ...options.jsonStringifyOptions
-                  )
+                    ...options.jsonStringifyOptions,
+                  ),
                 );
 
                 const outputPath = resolvePath(output, basename(sectionId));
-                return writeFile(outputPath, liquid, { encoding: 'utf-8' });
-              })
+                return writeFile(outputPath, liquid, { encoding: 'utf8' });
+              }),
             );
-          }
-        )
+          },
+        ),
       );
 
-      const entriesToDelete = Array.from(schemaToSectionMap.keys())
+      const entriesToDelete = [...schemaToSectionMap.keys()]
         .map(getOutputChunkByEntryId)
-        .filter((entry): entry is Exclude<typeof entry, undefined> =>
-          Boolean(entry)
-        )
+        .filter(entry => entry !== undefined)
         .map(entry => entry[0]);
 
       entriesToDelete.forEach(name => {
