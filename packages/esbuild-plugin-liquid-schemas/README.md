@@ -13,8 +13,10 @@ npm install --save-dev esbuild-plugin-liquid-schemas
 Install ESBuild and this plugin
 
 ```shell
-npm install --save-dev esbuild esbuild-plugin-liquid-schemas
+npm install --save-dev esbuild esbuild-plugin-liquid-schemas shopify-schema-utils
 ```
+
+`shopify-schema-utils` is optional, but recommended for enhanced linting and editor support. [Take a look at the `shopify-schema-utils` docs](../shopify-schema-utils/README.md).
 
 Create an ESBuild script at `scripts/build-schemas.js`
 
@@ -68,13 +70,15 @@ Create a schema in a JS/TS file
 ```js
 // schemas/sections/my-section.js
 
+import { defineSectionSchema } from 'shopify-schema-utils';
+
 const name = 'My Section';
 
-export default {
+export default defineSectionSchema({
   name,
   blocks: [{ name: '@theme' }],
   presets: [{ name }],
-};
+});
 ```
 
 Import the module into your Liquid section
