@@ -1,5 +1,34 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`esbuild-plugin-liquid-schemas > can load a schema with an import alias 1`] = `
+"{%- # import schema from '@schemas/section.ts' -%}
+
+<h1>section.liquid</h1>
+
+{% schema %}
+{
+  "name": "esbuild-plugin-liquid-schemas",
+  "tests": [
+    "with-import-alias"
+  ]
+}
+{% endschema %}"
+`;
+
+exports[`esbuild-plugin-liquid-schemas > can output a schema with plugin transformations 1`] = `
+"<h1>section.liquid</h1>
+
+{% schema %}
+{
+  "name": "esbuild-plugin-liquid-schemas",
+  "tests": [
+    "with-plugin-transformations"
+  ]
+}
+{% endschema %}
+"
+`;
+
 exports[`esbuild-plugin-liquid-schemas > can output a section with import schema comment 1`] = `
 "{%- # import schema from '../schemas/section.ts' -%}
 
@@ -16,6 +45,21 @@ exports[`esbuild-plugin-liquid-schemas > can output a section with import schema
 `;
 
 exports[`esbuild-plugin-liquid-schemas > can use import aliases 1`] = `
+"{%- # import schema from '@schemas/section.ts' -%}
+
+<h1>section.liquid</h1>
+
+{% schema %}
+{
+  "name": "esbuild-plugin-liquid-schemas",
+  "tests": [
+    "with-import-alias"
+  ]
+}
+{% endschema %}"
+`;
+
+exports[`esbuild-plugin-liquid-schemas > can use plugin transformations 1`] = `
 "{%- # import schema from '@schemas/section.ts' -%}
 
 <h1>section.liquid</h1>

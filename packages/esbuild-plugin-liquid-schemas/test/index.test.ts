@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { build, type BuildOptions } from 'esbuild';
+import yaml from 'unplugin-yaml/esbuild';
 import { describe, expect, it } from 'vitest';
 import liquidSchemas from '../src';
 
@@ -85,26 +86,7 @@ describe('esbuild-plugin-liquid-schemas', () => {
     expect(output).toMatchSnapshot();
   });
 
-  it.todo('can output a schema with plugin transformations', async () => {
-    const fixture = getFixture('with-plugin-transformations');
-    await fixture.build();
-
-    const output = fixture.getResult();
-
-    expect(output).toMatchSnapshot();
-  });
-
-  it('can output a section with import schema comment', async () => {
-    const fixture = getFixture('with-import-schema-comment');
-
-    await fixture.build();
-
-    const output = fixture.getResult();
-
-    expect(output).toMatchSnapshot();
-  });
-
-  it('can use import aliases', async () => {
+  it('can load a schema with an import alias', async () => {
     const fixture = getFixture('with-import-alias');
 
     fixture.config(config => {
@@ -115,6 +97,33 @@ describe('esbuild-plugin-liquid-schemas', () => {
         tsconfig,
       };
     });
+
+    await fixture.build();
+
+    const output = fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can output a schema with plugin transformations', async () => {
+    const fixture = getFixture('with-plugin-transformations');
+
+    fixture.config(config => {
+      return {
+        ...config,
+        plugins: [...(config.plugins as []), yaml()],
+      };
+    });
+
+    await fixture.build();
+
+    const output = fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can output a section with import schema comment', async () => {
+    const fixture = getFixture('with-import-schema-comment');
 
     await fixture.build();
 
