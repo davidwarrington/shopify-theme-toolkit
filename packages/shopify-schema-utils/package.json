@@ -1,0 +1,37 @@
+{
+  "name": "shopify-schema-utils",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "type": "module",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidwarrington/shopify-theme-toolkit.git",
+    "directory": "packages/shopify-schema-utils"
+  },
+  "bugs": {
+    "url": "https://github.com/davidwarrington/shopify-theme-toolkit/issues"
+  },
+  "keywords": [
+    "shopify",
+    "liquid",
+    "schemas"
+  ],
+  "files": [
+    "dist/*"
+  ],
+  "devDependencies": {
+    "tsconfig": "workspace:*",
+    "vitest": "^3.2.2"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  }
+}
