@@ -1,5 +1,8 @@
 # Shopify Schema Utils
 
+> [!NOTE]
+> A huge thanks goes out to [@JoviDeCroock](https://github.com/jovidecroock) for implementing schema typing and translation inference for this package.
+
 Utilities for writing shopify schemas in JavaScript/Typescript.
 
 ## Installation
