@@ -56,6 +56,15 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2(@types/node@22.15.30)(jiti@2.4.2)(yaml@2.8.0)
 
+  packages/shopify-schema-utils:
+    devDependencies:
+      tsconfig:
+        specifier: workspace:*
+        version: link:../tsconfig
+      vitest:
+        specifier: ^3.2.2
+        version: 3.2.2(@types/node@22.15.30)(jiti@2.4.2)(yaml@2.8.0)
+
   packages/tsconfig: {}
 
   packages/vite-plugin-shopify-section-schema:
