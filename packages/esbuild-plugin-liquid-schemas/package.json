@@ -1,6 +1,6 @@
 {
   "name": "esbuild-plugin-liquid-schemas",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "exports": {
     ".": {
       "types": "./dist/index.ts",
@@ -44,6 +44,7 @@
   },
   "scripts": {
     "build": "tsdown",
+    "prepublishOnly": "pnpm build",
     "test": "vitest run",
     "test:watch": "vitest"
   }
