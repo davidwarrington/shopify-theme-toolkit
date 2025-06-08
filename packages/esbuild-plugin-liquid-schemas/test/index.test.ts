@@ -27,7 +27,7 @@ function getFixture(fixture: string) {
           entryPoints: [options.input],
           bundle: true,
           write: false,
-          outdir: '.shopify',
+          outdir: getPath('dist'),
           format: 'esm',
           plugins: [liquidSchemas({ write: false })],
           logLevel: 'silent',
@@ -61,7 +61,7 @@ function getFixture(fixture: string) {
 }
 
 describe('esbuild-plugin-liquid-schemas', () => {
-  it.skip('can output a schema with a single module', async () => {
+  it.todo('can output a schema with a single module', async () => {
     const fixture = getFixture('with-single-module');
     await fixture.build();
 
@@ -70,7 +70,7 @@ describe('esbuild-plugin-liquid-schemas', () => {
     expect(output).toMatchSnapshot();
   });
 
-  it.skip('can output a schema with modules', async () => {
+  it.todo('can output a schema with modules', async () => {
     const fixture = getFixture('with-modules');
     await fixture.build();
 
@@ -79,7 +79,7 @@ describe('esbuild-plugin-liquid-schemas', () => {
     expect(output).toMatchSnapshot();
   });
 
-  it.skip('can output a schema with plugin transformations', async () => {
+  it.todo('can output a schema with plugin transformations', async () => {
     const fixture = getFixture('with-plugin-transformations');
     await fixture.build();
 
