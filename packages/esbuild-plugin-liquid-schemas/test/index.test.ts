@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { build } from 'esbuild';
+import { build, type BuildOptions } from 'esbuild';
 import { describe, expect, it } from 'vitest';
 import liquidSchemas from '../src';
 
@@ -20,18 +20,24 @@ function getFixture(fixture: string) {
 
   const results = new Map<string, string>();
 
+  let config = {
+    entryPoints: [options.input],
+    bundle: true,
+    write: false,
+    outdir: getPath('dist'),
+    format: 'esm',
+    plugins: [liquidSchemas({ write: false })],
+    logLevel: 'silent',
+  } satisfies BuildOptions;
+
   return {
+    config(configModifier: (config: BuildOptions) => BuildOptions) {
+      config = configModifier(config) as typeof config;
+    },
+
     async build() {
       try {
-        const result = await build({
-          entryPoints: [options.input],
-          bundle: true,
-          write: false,
-          outdir: getPath('dist'),
-          format: 'esm',
-          plugins: [liquidSchemas({ write: false })],
-          logLevel: 'silent',
-        });
+        const result = await build(config);
 
         results.clear();
 
@@ -90,6 +96,25 @@ describe('esbuild-plugin-liquid-schemas', () => {
 
   it('can output a section with import schema comment', async () => {
     const fixture = getFixture('with-import-schema-comment');
+
+    await fixture.build();
+
+    const output = fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can use import aliases', async () => {
+    const fixture = getFixture('with-import-alias');
+
+    fixture.config(config => {
+      const tsconfig = fixture.getPath('tsconfig.json');
+
+      return {
+        ...config,
+        tsconfig,
+      };
+    });
 
     await fixture.build();
 

@@ -14,3 +14,18 @@ exports[`esbuild-plugin-liquid-schemas > can output a section with import schema
 }
 {% endschema %}"
 `;
+
+exports[`esbuild-plugin-liquid-schemas > can use import aliases 1`] = `
+"{%- # import schema from '@schemas/section.ts' -%}
+
+<h1>section.liquid</h1>
+
+{% schema %}
+{
+  "name": "esbuild-plugin-liquid-schemas",
+  "tests": [
+    "with-import-alias"
+  ]
+}
+{% endschema %}"
+`;
