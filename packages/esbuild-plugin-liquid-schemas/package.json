@@ -1,14 +1,35 @@
 {
   "name": "esbuild-plugin-liquid-schemas",
-  "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
-  "main": "./dist/index.mjs",
+  "version": "0.0.0",
+  "exports": {
+    ".": {
+      "types": "./dist/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "type": "module",
-  "scripts": {
-    "build": "tsdown",
-    "test": "vitest run",
-    "test:watch": "vitest"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidwarrington/shopify-theme-toolkit.git",
+    "directory": "packages/esbuild-plugin-liquid-schemas"
+  },
+  "bugs": {
+    "url": "https://github.com/davidwarrington/shopify-theme-toolkit/issues"
+  },
+  "keywords": [
+    "shopify",
+    "liquid",
+    "schemas",
+    "esbuild",
+    "esbuild-plugin"
+  ],
+  "files": [
+    "dist/*"
+  ],
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "mlly": "^1.1.1"
   },
   "devDependencies": {
     "@rollup/plugin-yaml": "^4.0.1",
@@ -18,11 +39,12 @@
     "vite": "^6.3.5",
     "vitest": "^3.2.2"
   },
-  "dependencies": {
-    "fast-glob": "^3.3.3",
-    "mlly": "^1.1.1"
-  },
   "peerDependencies": {
     "esbuild": "^0.25.5"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "test:watch": "vitest"
   }
 }
