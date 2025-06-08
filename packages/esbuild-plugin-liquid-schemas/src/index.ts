@@ -7,10 +7,16 @@ import { transformSection } from './transformer';
 
 const PLACEHOLDER_SCHEMA = '{{{ schema }}}';
 
-export default function liquidSchemas(): Plugin {
+export interface LiquidSchemasPluginOptions {
+  write?: boolean;
+}
+
+export default function liquidSchemas({
+  write = true,
+}: LiquidSchemasPluginOptions = {}): Plugin {
   return {
     name: 'liquid-schemas',
-    setup({ initialOptions, onEnd, onLoad, resolve }) {
+    setup({ onEnd, onLoad, resolve }) {
       const assetCache = new Map<string, string>();
 
       onLoad({ filter: /.*.liquid$/ }, async ({ path }) => {
@@ -60,7 +66,7 @@ export default function liquidSchemas(): Plugin {
 
             assetCache.set(file.path, file.hash);
 
-            if (initialOptions.write) {
+            if (write) {
               writeFile(evaluatedResult.path, evaluatedResult.content, 'utf8');
             } else {
               result.outputFiles ??= [];

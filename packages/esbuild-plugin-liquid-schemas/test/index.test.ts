@@ -29,7 +29,7 @@ function getFixture(fixture: string) {
           write: false,
           outdir: '.shopify',
           format: 'esm',
-          plugins: [liquidSchemas()],
+          plugins: [liquidSchemas({ write: false })],
           logLevel: 'silent',
         });
 
