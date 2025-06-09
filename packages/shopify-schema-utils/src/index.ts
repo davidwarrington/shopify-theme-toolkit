@@ -175,6 +175,11 @@ export interface InlineRichtextSettingSchema<Translations extends Locales>
   readonly default?: string;
 }
 
+export interface LinkListSettingSchema<Translations extends Locales>
+  extends BaseSettingSchema<Translations> {
+  readonly type: 'link_list';
+}
+
 export interface LiquidSettingSchema<Translations extends Locales>
   extends BaseSettingSchema<Translations> {
   readonly type: 'liquid';
@@ -262,6 +267,7 @@ export type SettingSchema<Translations extends Locales> =
   | HtmlSettingSchema<Translations>
   | ImagePickerSettingSchema<Translations>
   | InlineRichtextSettingSchema<Translations>
+  | LinkListSettingSchema<Translations>
   | LiquidSettingSchema<Translations>
   | MetaobjectSettingSchema<Translations>
   | MetaobjectListSettingSchema<Translations>
