@@ -9,6 +9,7 @@
   },
   "type": "module",
   "license": "ISC",
+  "homepage": "https://github.com/davidwarrington/shopify-theme-toolkit/tree/main/packages/shopify-schema-utils",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidwarrington/shopify-theme-toolkit.git",
