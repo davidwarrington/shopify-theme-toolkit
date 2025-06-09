@@ -155,7 +155,7 @@ export interface ColorSchemaGroupSettingSchema<Translations extends Locales>
 export interface FontPickerSettingSchema<Translations extends Locales>
   extends BaseSettingSchema<Translations> {
   readonly type: 'font_picker';
-  readonly default?: string;
+  readonly default: string;
 }
 
 export interface HtmlSettingSchema<Translations extends Locales>
