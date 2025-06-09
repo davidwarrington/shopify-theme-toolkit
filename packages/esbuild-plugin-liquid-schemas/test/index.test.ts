@@ -1,4 +1,5 @@
 import path from 'node:path';
+import prettier from 'prettier';
 import { build, type BuildOptions } from 'esbuild';
 import yaml from 'unplugin-yaml/esbuild';
 import { describe, expect, it } from 'vitest';
@@ -95,6 +96,59 @@ describe('esbuild-plugin-liquid-schemas', () => {
       return {
         ...config,
         tsconfig,
+      };
+    });
+
+    await fixture.build();
+
+    const output = fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can support a customer formatter', async () => {
+    const fixture = getFixture('with-custom-formatter');
+
+    fixture.config(config => {
+      return {
+        ...config,
+        plugins: [
+          liquidSchemas({
+            formatter({ source }) {
+              return `formatter-start\n${source}\nformatter-end`;
+            },
+            write: false,
+          }),
+        ],
+      };
+    });
+
+    await fixture.build();
+
+    const output = fixture.getResult();
+
+    expect(output).toMatchSnapshot();
+  });
+
+  it('can support a prettier formatting', async () => {
+    const fixture = getFixture('with-prettier-formatting');
+
+    fixture.config(config => {
+      return {
+        ...config,
+        plugins: [
+          liquidSchemas({
+            async formatter({ path, source }) {
+              const options = await prettier.resolveConfig(path);
+              return await prettier.format(source, {
+                ...options,
+                filepath: path,
+                plugins: ['@shopify/prettier-plugin-liquid'],
+              });
+            },
+            write: false,
+          }),
+        ],
       };
     });
 

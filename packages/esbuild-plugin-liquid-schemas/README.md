@@ -99,6 +99,35 @@ On save, the schema exported by `schema/sections/my-section.js` will be injected
 
 ## Options
 
+## formatter
+
+Default: `({ source }) => string`
+
+Type: `(options: { path: string; content: string; }) => Promise<string> | string`
+
+If you're running a formatter such as prettier against your Liquid files it might conflict with the default formatting used by this plugin. To avoid this, you can provide your own formatter. Here's an example showing how to use prettier as your formatter
+
+```ts
+import liquidSchemas from 'esbuild-plugin-liquid-schemas';
+import prettier from 'prettier';
+
+const config = {
+  // ...
+  plugins: [
+    liquidSchemas({
+      async formatter({ path, source }) {
+        const options = await prettier.resolveConfig(path);
+        return await prettier.format(source, {
+          ...options,
+          filepath: path,
+          plugins: ['@shopify/prettier-plugin-liquid'],
+        });
+      },
+    }),
+  ],
+};
+```
+
 ### write
 
 Default: `true`
