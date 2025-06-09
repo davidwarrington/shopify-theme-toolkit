@@ -83,7 +83,7 @@ export interface RangeSettingSchema<Translations extends Locales>
 interface SelectOption {
   readonly value: string;
   readonly label: string;
-  readonly group: string;
+  readonly group?: string;
 }
 
 export interface SelectSettingSchema<Translations extends Locales>
