@@ -83,7 +83,7 @@ export interface RangeSettingSchema<Translations extends Locales>
 interface SelectOption {
   readonly value: string;
   readonly label: string;
-  readonly group: string;
+  readonly group?: string;
 }
 
 export interface SelectSettingSchema<Translations extends Locales>
@@ -155,7 +155,7 @@ export interface ColorSchemaGroupSettingSchema<Translations extends Locales>
 export interface FontPickerSettingSchema<Translations extends Locales>
   extends BaseSettingSchema<Translations> {
   readonly type: 'font_picker';
-  readonly default?: string;
+  readonly default: string;
 }
 
 export interface HtmlSettingSchema<Translations extends Locales>
@@ -173,6 +173,11 @@ export interface InlineRichtextSettingSchema<Translations extends Locales>
   extends BaseSettingSchema<Translations> {
   readonly type: 'inline_richtext';
   readonly default?: string;
+}
+
+export interface LinkListSettingSchema<Translations extends Locales>
+  extends BaseSettingSchema<Translations> {
+  readonly type: 'link_list';
 }
 
 export interface LiquidSettingSchema<Translations extends Locales>
@@ -262,6 +267,7 @@ export type SettingSchema<Translations extends Locales> =
   | HtmlSettingSchema<Translations>
   | ImagePickerSettingSchema<Translations>
   | InlineRichtextSettingSchema<Translations>
+  | LinkListSettingSchema<Translations>
   | LiquidSettingSchema<Translations>
   | MetaobjectSettingSchema<Translations>
   | MetaobjectListSettingSchema<Translations>
