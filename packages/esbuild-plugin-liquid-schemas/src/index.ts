@@ -8,10 +8,15 @@ import { transformSection } from './transformer';
 const PLACEHOLDER_SCHEMA = '{{{ schema }}}';
 
 export interface LiquidSchemasPluginOptions {
+  formatter?: (options: {
+    path: string;
+    source: string;
+  }) => Promise<string> | string;
   write?: boolean;
 }
 
 export default function liquidSchemas({
+  formatter = options => options.source,
   write = true,
 }: LiquidSchemasPluginOptions = {}): Plugin {
   return {
@@ -66,15 +71,20 @@ export default function liquidSchemas({
 
             assetCache.set(file.path, file.hash);
 
+            const formattedContent = await formatter({
+              path: evaluatedResult.path,
+              source: evaluatedResult.content,
+            });
+
             if (write) {
-              writeFile(evaluatedResult.path, evaluatedResult.content, 'utf8');
+              writeFile(evaluatedResult.path, formattedContent, 'utf8');
             } else {
               result.outputFiles ??= [];
               result.outputFiles.push({
-                contents: new TextEncoder().encode(evaluatedResult.content),
+                contents: new TextEncoder().encode(formattedContent),
                 hash: '',
                 path: evaluatedResult.path,
-                text: evaluatedResult.content,
+                text: formattedContent,
               });
             }
           }),
